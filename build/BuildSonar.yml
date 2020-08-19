@@ -1,0 +1,74 @@
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+      - feature/*
+      - hotfix/*
+      - release/*
+
+pool:
+  name: 'Default'
+  
+steps:
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk 3.1.201'
+  inputs:
+    version: 3.1.201
+    performMultiLevelLookup: true
+
+- task: PowerShell@2
+  displayName: "Running Gitversion to determine version for SonarCloud"
+  inputs:
+    targetType: inline
+    script: |
+      dotnet tool restore
+      $version = dotnet tool run dotnet-gitversion /config GitVersion.yml | Out-String | ConvertFrom-Json
+      Write-Host $version
+      $assemblyVer = $version.AssemblySemVer
+      $branchName = $version.BranchName
+      Write-Host "Assembly semver is $assemblyVer"
+      Write-Host "##vso[task.setvariable variable=assemblyVer;]$assemblyVer"
+      Write-Host "##vso[task.setvariable variable=branchName;]$branchName"
+      
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'Sonar Cloud GitHub Gian Maria'
+    organization: 'alkampfergit-github'
+    scannerMode: 'MSBuild'
+    projectKey: 'LogLibrary2020_privateKey'
+    projectName: 'LogLibrary2020'
+    projectVersion: '$(assemblyVer)'
+
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: 5.x
+    checkLatest: true
+
+- task: NuGetCommand@2
+  inputs:
+    command: restore
+    restoreSolution: src/LogLibrary.sln
+- task: VSBuild@1
+  inputs:
+    solution: src/LogLibrary.sln
+    configuration: debug
+    restoreNugetPackages: true
+
+- task: VSTest@2
+  inputs:
+    codeCoverageEnabled: true
+
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
+
+
+  
+   
+   
+   
+   
