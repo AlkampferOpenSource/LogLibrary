@@ -1,10 +1,7 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+#pragma warning disable S2699 // Tests should include assertions
 
 namespace LogLibrary.Tests
 {
@@ -25,7 +22,6 @@ namespace LogLibrary.Tests
             _sut = new Logger(level, _logDestination);
         }
 
-
         [Test]
         public void Verify_debug_log_not_logged_if_level_is_info()
         {
@@ -43,6 +39,7 @@ namespace LogLibrary.Tests
         }
 
         [Test]
+
         public void Verify_warn_log_is_logged_if_level_is_info()
         {
             CreateLogger(LogLevel.Info);
@@ -55,10 +52,12 @@ namespace LogLibrary.Tests
         {
             CreateLogger(LogLevel.Info);
             _sut.Log(LogLevel.Info, "This have a parameter {0}", "value");
-            _logDestination.Received().AddLog(Arg.Do<LogMessage>(m => 
+            _logDestination.Received().AddLog(Arg.Do<LogMessage>(m =>
             {
                 Assert.That(m.RenderedMessage, Is.EqualTo("This have a parameter value"));
             }));
         }
     }
 }
+
+#pragma warning restore S2699 // Tests should include assertions

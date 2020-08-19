@@ -24,7 +24,9 @@ steps:
     targetType: inline
     script: |
       dotnet tool restore
-      $version = dotnet tool run dotnet-gitversion /config GitVersion.yml | Out-String | ConvertFrom-Json
+      $gvo = dotnet tool run dotnet-gitversion /config GitVersion.yml | Out-String
+      Write-Host $gvo
+      $version = $gvo | ConvertFrom-Json
       Write-Host $version
       $assemblyVer = $version.AssemblySemVer
       $branchName = $version.BranchName
