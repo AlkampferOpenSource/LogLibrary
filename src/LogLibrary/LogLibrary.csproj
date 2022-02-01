@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleLogDestination.cs" />
+    <Compile Include="FileLogDestination.cs" />
     <Compile Include="ILogDestination.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LogMessage.cs" />

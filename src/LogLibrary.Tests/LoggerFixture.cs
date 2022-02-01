@@ -9,7 +9,7 @@ namespace LogLibrary.Tests
     public class LoggerFixture
     {
         private Logger _sut;
-        ILogDestination _logDestination;
+        private ILogDestination _logDestination;
 
         [SetUp]
         public void SetUp()
